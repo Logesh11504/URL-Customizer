@@ -111,7 +111,7 @@ app.post("/register", async (req, res) => {
     }
 
     const usernameCheck = await db.query(
-      "SELECT email FROM user_credentials WHERE table_name = $1",
+      "SELECT email FROM user_credentials WHERE username = $1",
       [uniqueUsername]
     );
 
@@ -140,7 +140,7 @@ app.post("/register", async (req, res) => {
 
       try {
         const result = await db.query(
-          "INSERT INTO user_credentials (email, password, table_name) VALUES ($1, $2, $3) RETURNING *",
+          "INSERT INTO user_credentials (email, password, username) VALUES ($1, $2, $3) RETURNING *",
           [email, hash, uniqueUsername] 
         );
         const user = result.rows[0];
@@ -197,7 +197,7 @@ app.get("/home", async (req, res) => {
   if (req.isAuthenticated()) {
     try {
       const userEmail = req.user.email;
-      const username = req.user.table_name;
+      const username = req.user.username;
 
       const fetch = await db.query(
         "SELECT * FROM links WHERE user_email = $1 ORDER BY click_count DESC",
@@ -230,7 +230,7 @@ app.post("/submit", async (req, res) => {
 
   try {
     const userEmail = req.user.email;
-    const username = req.user.table_name;
+    const username = req.user.username;
 
     let shortcode = null;
     if (req.body.shortcode.trim().length > 0) {
@@ -293,7 +293,7 @@ app.get("/:username/:shortcode", async (req, res) => {
     const requestedUsername = req.params.username;
 
     const userResult = await db.query(
-      "SELECT email FROM user_credentials WHERE table_name = $1",
+      "SELECT email FROM user_credentials WHERE username = $1",
       [requestedUsername]
     );
 
@@ -435,7 +435,7 @@ passport.use(
           while (
             (
               await db.query(
-                "SELECT email FROM user_credentials WHERE table_name = $1",
+                "SELECT email FROM user_credentials WHERE username = $1",
                 [uniqueUsername]
               )
             ).rows.length > 0
@@ -445,7 +445,7 @@ passport.use(
           }
 
           const newUser = await db.query(
-            "INSERT INTO user_credentials (email, password, table_name) VALUES ($1,$2,$3) RETURNING *",
+            "INSERT INTO user_credentials (email, password, username) VALUES ($1,$2,$3) RETURNING *",
             [profile.email, "google", uniqueUsername]
           );
 
