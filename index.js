@@ -10,6 +10,7 @@ import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
 import path from "path";
 import { fileURLToPath } from "url";
+import connectPgSimple from "connect-pg-simple";
 
 dotenv.config();
 
@@ -33,25 +34,7 @@ pg.types.setTypeParser(1114, (stringValue) => {
   return stringValue;
 });
 
-const maxAgeInMs = parseInt(process.env.MAX_AGE);
-
-app.use(
-  session({
-    secret: process.env.SECRET, 
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: maxAgeInMs,
-    },
-  })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-const saltRounds = parseInt(process.env.SALT_ROUND);
-
-const db = new pg.Client({
+const db = new pg.Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -63,16 +46,40 @@ const db = new pg.Client({
   },
 });
 
-db.connect()
-  .then(() => console.log("Database connected successfully"))
-  .catch((err) => console.error("Database connection error:", err.stack));
+db.on("connect", () => console.log("Database connected successfully"));
+db.on("error", (err) => console.error("Database connection error:", err.stack));
+
+const PgStore = connectPgSimple(session);
+
+const maxAgeInMs = parseInt(process.env.MAX_AGE);
+
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: new PgStore({
+      pool: db,
+      tableName: "session",
+    }),
+    cookie: {
+      maxAge: maxAgeInMs,
+      secure: true,
+      sameSite: "none",
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+const saltRounds = parseInt(process.env.SALT_ROUND);
 
 app.get("/", async (req, res) => {
   res.render("about.ejs");
 });
 
 app.get("/register", async (req, res) => {
-
   let error = req.session.registerError;
   req.session.registerError = null;
 
@@ -80,7 +87,6 @@ app.get("/register", async (req, res) => {
 });
 
 app.get("/login", async (req, res) => {
-
   const errorMessage = req.session.messages ? req.session.messages[0] : null;
 
   if (req.session.messages) {
@@ -91,7 +97,6 @@ app.get("/login", async (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-
   const name = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
@@ -121,7 +126,6 @@ app.post("/register", async (req, res) => {
     }
 
     bcrypt.hash(password, saltRounds, async (err, hash) => {
-
       if (err) {
         console.error("Bcrypt Hashing Error:", err);
         req.session.registerError =
@@ -141,7 +145,7 @@ app.post("/register", async (req, res) => {
       try {
         const result = await db.query(
           "INSERT INTO user_credentials (email, password, username) VALUES ($1, $2, $3) RETURNING *",
-          [email, hash, uniqueUsername] 
+          [email, hash, uniqueUsername]
         );
         const user = result.rows[0];
 
@@ -159,7 +163,6 @@ app.post("/register", async (req, res) => {
         return res.redirect("/register");
       }
     });
-
   } catch (err) {
     console.error("Error during initial registration checks:", err);
     req.session.registerError =
@@ -193,7 +196,6 @@ app.get(
 );
 
 app.get("/home", async (req, res) => {
-
   if (req.isAuthenticated()) {
     try {
       const userEmail = req.user.email;
@@ -208,22 +210,19 @@ app.get("/home", async (req, res) => {
 
       res.render("home.ejs", {
         allLinks: fetch.rows,
-        baseUrl: baseURL,
-        username: username, 
+        baseURL: baseURL,
+        username: username,
       });
-
     } catch (error) {
       console.error("Error fetching links:", error.stack);
       res.render("error.ejs", { error: error.message });
     }
-
   } else {
     res.redirect("/");
   }
 });
 
 app.post("/submit", async (req, res) => {
-
   if (!req.isAuthenticated()) {
     return res.redirect("/login");
   }
@@ -234,11 +233,10 @@ app.post("/submit", async (req, res) => {
 
     let shortcode = null;
     if (req.body.shortcode.trim().length > 0) {
-
       const check = await db.query(
         "SELECT short_code FROM links WHERE short_code = $1 AND user_email = $2",
         [req.body.shortcode.trim(), userEmail]
-      ); 
+      );
 
       if (check.rows.length > 0) {
         return res.render("error.ejs", {
@@ -248,9 +246,20 @@ app.post("/submit", async (req, res) => {
       }
 
       shortcode = req.body.shortcode.trim();
-
     } else {
-      shortcode = shortid.generate();
+      let isUnique = false;
+      while (!isUnique) {
+        shortcode = shortid.generate();
+
+        const check = await db.query(
+          "SELECT short_code FROM links WHERE short_code = $1",
+          [shortcode]
+        );
+
+        if (check.rows.length === 0) {
+          isUnique = true;
+        }
+      }
     }
 
     await db.query(
@@ -265,29 +274,26 @@ app.post("/submit", async (req, res) => {
 
     if (fetch.rows.length === 0) {
       throw new Error("Failed to retrieve the newly created short link.");
-    } 
+    }
 
     const newShortUrl = `${req.protocol}://${req.get("host")}/${username}/${
       fetch.rows[0].short_code
     }`;
 
     res.render("submit.ejs", {
-      short_url: newShortUrl, 
+      short_url: newShortUrl,
       shortcode: fetch.rows[0].short_code,
       long_url: fetch.rows[0].long_url,
       total_click: fetch.rows[0].click_count,
       last_clicked: String(fetch.rows[0].last_clicked),
     });
-
   } catch (error) {
     console.error("Error submitting link:", error.stack);
     res.render("error.ejs", { error: error.message });
   }
 });
 
-
 app.get("/:username/:shortcode", async (req, res) => {
-
   try {
     const requestedShortcode = req.params.shortcode;
     const requestedUsername = req.params.username;
@@ -317,13 +323,11 @@ app.get("/:username/:shortcode", async (req, res) => {
       );
 
       res.redirect(original_url_result.rows[0].long_url);
-
     } else {
       res.status(404).render("error.ejs", {
         error: `Short URL '${requestedShortcode}' for user '${requestedUsername}' not found.`,
       });
     }
-
   } catch (error) {
     console.error("Error processing shortcode request:", error.stack);
     res.render("error.ejs", { error: error.message });
@@ -331,7 +335,6 @@ app.get("/:username/:shortcode", async (req, res) => {
 });
 
 app.post("/delete/:username/:shortcode", async (req, res) => {
-
   if (!req.isAuthenticated()) {
     return res.redirect("/login");
   }
@@ -339,8 +342,7 @@ app.post("/delete/:username/:shortcode", async (req, res) => {
   try {
     const requestedUsername = req.params.username;
     const requestedShortcode = req.params.shortcode;
-    const userEmail = req.user.email; 
-
+    const userEmail = req.user.email;
 
     if (req.user.username !== requestedUsername) {
       return res.status(403).render("error.ejs", {
@@ -360,7 +362,6 @@ app.post("/delete/:username/:shortcode", async (req, res) => {
     }
 
     res.redirect("/home");
-
   } catch (error) {
     console.error("Error deleting link:", error.stack);
     res.render("error.ejs", { error: "An error occurred during deletion." });
@@ -390,17 +391,15 @@ passport.use(
             if (result) {
               return cb(null, user);
             } else {
-              return cb(null, false, { message: "Incorrect password." }); // <-- Added message
+              return cb(null, false, { message: "Incorrect password." });
             }
           }
         });
-
       } else {
         return cb(null, false, {
           message: "User not found. Check email address.",
         });
       }
-
     } catch (err) {
       console.log(err);
       return cb(err);
@@ -418,7 +417,6 @@ passport.use(
       userprofileURL: process.env.USER_PROFILE_URL,
     },
     async (accessToken, refreshToken, profile, cb) => {
-
       console.log(profile);
       const result = await db.query(
         "SELECT * FROM user_credentials WHERE email = $1",
@@ -427,7 +425,6 @@ passport.use(
 
       try {
         if (result.rows.length === 0) {
-
           let username = profile.displayName.replaceAll(" ", "_").toLowerCase();
           let uniqueUsername = username;
           let counter = 1;
@@ -453,11 +450,9 @@ passport.use(
         } else {
           cb(null, result.rows[0]);
         }
-
       } catch (err) {
         cb(err);
       }
-
     }
   )
 );
