@@ -27,7 +27,7 @@ app.set("view engine", "ejs");
 let port = process.env.PORT;
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 pg.types.setTypeParser(1114, (stringValue) => {
   return stringValue;
