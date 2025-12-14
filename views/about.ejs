@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1 class="title">URL SHORTENER</h1>
+    <p class="description-text">
+        This website is a secure and personalized URL shortening service designed to help users manage, track, and share their links effectively. The core functionality begins with secure authentication, allowing users to register and log in either with a traditional email and password (which are protected using encryption) or instantly via their Google account. Upon registration, each user is assigned a unique username that personalizes their short links, creating a dedicated domain structure for all their URLs (e.g., yoursite.com/username/shortcode). Users can shorten any long URL and choose between system-generated random shortcodes or custom, memorable shortcodes tailored to their content. All generated links are centrally managed on a private dashboard, where the platform tracks essential performance metrics, including the total click count and the time of the last click for every link. When a user or visitor clicks on one of the custom short links, the system instantly redirects them to the original destination while simultaneously updating the link's analytics data. This allows users to monitor the success of their campaigns, quickly identify their most popular links, and securely delete any link they no longer need from their personalized dashboard.
+    </p>
+    <div class="user-login-div">
+        <form action="/register">
+            <button type="submit">Register</button>
+        </form>
+        <form action="/login">
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <form action="/auth/google" method="get">
+        <button class="sign-in-button" type="submit">Sign-in with Google</button>
+    </form>
+</body>
+</html>
