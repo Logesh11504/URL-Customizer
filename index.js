@@ -8,6 +8,8 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import GoogleStrategy from "passport-google-oauth2";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -15,6 +17,12 @@ let app = express();
 
 app.set("view engine", "ejs");
 app.set("views", "./views");
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 let port = process.env.PORT;
 
