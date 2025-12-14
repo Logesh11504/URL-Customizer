@@ -12,6 +12,10 @@ import GoogleStrategy from "passport-google-oauth2";
 dotenv.config();
 
 let app = express();
+
+app.set("view engine", "ejs");
+app.set("views", "./views");
+
 let port = process.env.PORT;
 
 app.use(bodyParser.urlencoded({ extended: true }));
