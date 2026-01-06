@@ -374,7 +374,7 @@ passport.use(
             if (result) {
               return cb(null, user);
             } else {
-              return cb(null, false, { message: "Incorrect password." }); // <-- Added message
+              return cb(null, false, { message: "Incorrect password." });
             }
           }
         });
