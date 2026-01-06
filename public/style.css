@@ -1,542 +1,523 @@
-/* ===== RESET & BASE ===== */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+/* ===== 1. CORE THEME & RESET ===== */
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Quicksand", sans-serif;
 }
 
-/* Page base */
 body {
-    min-height: 100vh;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #020617;
-    color: #e5e7eb;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 12px 32px;
-    overflow-x: hidden;
+  margin: 0;
+  padding: 40px 0;
+  background: #000;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stack title, form, and table */
+  align-items: center;
+  justify-content: flex-start; /* Start from the top */
+  padding: 40px 20px;
+  overflow-x: hidden;
+  color: #fff; /* Default text color to white */
 }
 
-/* ===== KEYFRAMES ===== */
-
-/* Title drops from top */
-@keyframes slideDownFade {
-    from {
-        opacity: 0;
-        transform: translateY(-25px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ===== 2. FIXED BACKGROUND LAYER ===== */
+section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; /* Use viewport width */
+  height: 100vh; /* Use viewport height */
+  display: flex;
+  justify-content: flex-start; /* Align from the left edge */
+  align-content: flex-start; /* Align from the top edge */
+  align-items: flex-start;
+  gap: 2px;
+  flex-wrap: wrap;
+  overflow: hidden;
+  z-index: 0;
+  background-color: #000; /* Fallback for gaps */
 }
 
-/* Card (forms) slide in from left */
-@keyframes slideInLeftFade {
-    from {
-        opacity: 0;
-        transform: translateX(-32px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+section::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#000, #f00, #000);
+  animation: animateBackground 5s linear infinite;
 }
 
-/* Tables slide in from right */
-@keyframes slideInRightFade {
-    from {
-        opacity: 0;
-        transform: translateX(32px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+@keyframes animateBackground {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
 }
 
-/* Generic subtle fade-up */
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+section span {
+  position: relative;
+  display: block;
+  /* Adjust size slightly to ensure they fit common screen divisions */
+  width: calc(6.25vw - 2px);
+  height: calc(6.25vw - 2px);
+  background: #181818;
+  z-index: 2;
+  transition: 1.5s;
+  pointer-events: auto;
 }
 
-/* ===== TITLES ===== */
-.title {
-    text-align: center;
-    font-size: 40px;
-    letter-spacing: 2.4px;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    opacity: 0;
-    animation: slideDownFade 0.7s ease-out 0.05s forwards;
+section span:hover {
+  background: #f00;
+  transition: 0s;
 }
 
-.user-login-div {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
+/* ===== ABOUT PAGE SPECIFIC STYLES ===== */
+
+.about-card {
+  max-width: 800px !important; /* Wider for the description text */
+  text-align: justify;
 }
 
-.sign-in-button {
-    width: 300px;
-    margin-top: 20px;
-}
-
-/* ===== DESCRIPTION TEXT (Entry Page) ===== */
 .description-text {
-    width: 100%;
-    max-width: 1200px; /* Limit width for readability */
-    text-align: justify;
-    margin: 0 auto 30px; /* Top/Bottom margin to separate from title and buttons */
-    line-height: 1.6;
-    font-size: 20px;
-    color: #9ca3af; /* Light gray for subtle contrast */
-    padding: 0 12px;
-    opacity: 0;
-    animation: fadeUp 0.7s ease-out 0.25s forwards; /* Animated in after the title */
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
 }
 
-/* Secondary title (home dashboard) */
+/* Button Layout inside the card */
+.user-login-div {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.user-login-div form {
+  flex: 1;
+}
+
+.google-btn {
+  background: transparent !important;
+  border: 1px solid #f00 !important;
+  color: #f00 !important;
+}
+
+.google-btn:hover {
+  background: #f00 !important;
+  color: #000 !important;
+}
+
+/* ===== 3. SIGNIN CARD (The Content) ===== */
+.signin {
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  background: rgba(24, 24, 24, 0.9); /* Slightly transparent */
+  padding: 40px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
+  z-index: 100; /* Higher layer than background */
+}
+
+.content h2 {
+  font-size: 2em;
+  color: #f00;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.form-title {
+  margin-bottom: 25px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.inputBox {
+  position: relative;
+  width: 100%;
+}
+
+.inputBox input {
+  width: 100%;
+  background: #111;
+  border: 1px solid #444;
+  outline: none;
+  padding: 25px 10px 7.5px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1em;
+}
+
+.inputBox i {
+  position: absolute;
+  left: 10px;
+  top: 15px;
+  font-style: normal;
+  color: #888;
+  transition: 0.5s;
+  pointer-events: none;
+}
+
+.inputBox input:focus ~ i,
+.inputBox input:valid ~ i {
+  transform: translateY(-12px);
+  font-size: 0.8em;
+  color: #f00;
+}
+
+input[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background: #f00;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  text-transform: uppercase;
+}
+
+input[type="submit"]:hover {
+  background: #ff4d4d;
+}
+
+.links {
+  margin-top: 15px;
+  text-align: center;
+  color: #fff;
+}
+
+.links a {
+  color: #f00;
+  text-decoration: none;
+}
+
+/* Update this block in your CSS */
+.dash-title {
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  /* margin-top: 20px; */
+  margin-bottom: 20px !important; /* This creates the space below the title */
+  text-align: center;
+  z-index: 100;
+}
+
 .dashboard {
-    width: 100%;
-    max-width: 960px;
-    margin: 32px auto 20px;
-    font-size: 30px !important;
-    font-weight: 600;
-    letter-spacing: 1.28px;
-    text-transform: uppercase;
-    color: #9ca3af;
-    opacity: 0;
-    animation: fadeUp 0.6s ease-out 0.35s forwards;
+  color: #f00;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  text-align: center;
+  z-index: 100; /* Stay above the grid */
 }
 
-/* ===== FORMS / CARD ===== */
-form {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+.dashboard-container {
+  position: relative;
+  z-index: 100;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* ADD THIS: Allows mouse to pass through to the grid spans */
+  pointer-events: none;
 }
 
-/* Card that wraps inputs + button */
-.input-glass {
-    width: 100%;
-    max-width: 720px;
-    padding: 20px 18px 18px;
-    border-radius: 18px;
-    background: #020617;
-    border: 1px solid #1f2937;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 16px 18px;
-    align-items: flex-end;
-    opacity: 0;
-    animation: slideInLeftFade 0.7s ease-out 0.18s forwards;
+.signin,
+.scroll-container,
+.home-page-button-div {
+  pointer-events: auto; /* Catch clicks and block grid hover here */
 }
 
-/* Stack everything on very small screens */
-@media (max-width: 600px) {
-    .input-glass {
-        grid-template-columns: 1fr;
-    }
-}
+/* ===== UPDATED TABLE STYLING ===== */
 
-/* Input block */
-.input {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.input label {
-    font-size: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1.92px;
-    color: #9ca3af;
-}
-
-/* Text fields */
-.input input {
-    padding: 9px 11px;
-    border-radius: 10px;
-    border: 1px solid #4b5563;
-    background: #020617;
-    color: #e5e7eb;
-    font-size: 20px;
-    outline: none;
-    transition:
-        border-color 0.16s ease-out,
-        box-shadow 0.16s ease-out,
-        background 0.16s ease-out,
-        transform 0.16s ease-out;
-}
-
-.input input::placeholder {
-    color: #6b7280;
-}
-
-.input input:focus {
-    border-color: #38bdf8;
-    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5);
-    background: #020617;
-    transform: translateY(-1px);
-}
-
-.password-container {
-    position: relative;
-    /* Ensures the icon stays inside the input-glass flow */
-    width: 100%;
-}
-
-/* Position the eye icon */
-.toggle-password {
-    position: absolute;
-    margin-left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 20px;
-    color: #666; /* Adjust color as needed */
-    transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    z-index: 10;
-}
-
-/* Style for displaying the error message */
-.error-message {
-    color: red;
-    border: 1px solid red;
-    padding: 10px;
-    margin: 15px auto;
-    width: 80%;
-    max-width: 400px;
-    text-align: center;
-}
-
-.toggle-password:hover {
-    color: #333; /* Darken on hover */
-    transform: translateY(-50%) scale(1.5); /* Slightly increase size */
-}
-
-/* Ensure the input field takes up the full width minus the icon space */
-.password-container input[type="password"],
-.password-container input[type="text"] {
-    padding-right: 40px; /* Make space so the icon doesn't overlap the text */
-    width: calc(100% - 40px); /* Adjust based on padding/margins */
-}
-
-/* ===== BUTTONS (no shadow, animated hover) ===== */
-button {
-    cursor: pointer;
-    border: none;
-    border-radius: 999px;
-    padding: 10px 20px;
-    font-weight: 600;
-    letter-spacing: 1.28px;
-    text-transform: uppercase;
-    font-size: 20px;
-    background: #38bdf8;
-    color: #020617;
-    white-space: nowrap;
-    transform: translateY(0) scale(1);
-    transition:
-        transform 0.22s ease-out,
-        background-color 0.22s ease-out,
-        color 0.22s ease-out;
-}
-
-/* Main hover effect: slight lift + scale */
-button:hover {
-    transform: translateY(-2px) scale(1.03);
-    background-color: #0ea5e9;
-}
-
-button:active {
-    transform: translateY(0) scale(0.97);
-}
-
-/* Icon-only buttons in table */
-button.icon {
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: 30px;
-    background: #0b1120;
-    color: #38bdf8;
-}
-
-/* Icon hover: subtle scale only */
-button.icon:hover {
-    background: #020617;
-    transform: translateY(-1px) scale(1.04);
-}
-
-button.icon:active {
-    transform: translateY(0) scale(0.96);
-}
-
-/* ===== ENTRY PAGE (3 buttons) ===== */
-body > form {
-    margin-bottom: 10px;
-}
-
-/* Make entry buttons equal width */
-body > form button {
-    width: 220px;
-}
-
-/* Add top margin after title for entry page */
-body > form:first-of-type {
-    margin-top: 10px;
-}
-
-.switch-link{
-    font-size: 20px;
-    margin-top: 10px;
-}
-
-/* ===== TABLE CONTAINERS ===== */
 .scroll-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto 32px;
-    padding: 12px;
-    border-radius: 16px;
-    background: #020617;
-    border: 1px solid #1f2937;
-    overflow-x: auto;
-    opacity: 0;
-    animation: slideInRightFade 0.7s ease-out 0.25s forwards;
+  width: 100%;
+  max-width: 1100px;
+  margin: 20px auto;
+  background: rgba(10, 10, 10, 0.95); /* Slightly darker for better contrast */
+  border: 1px solid #333;
+  border-radius: 12px;
+  z-index: 100;
+
+  /* ADDED PADDING TO ALL SIDES OF THE TABLE BOX */
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
-/* Submit page table slightly narrower */
-.scroll-container-submit {
-    max-width: 1000px;
-}
-
-/* ===== TABLES (DEFAULT DESKTOP VIEW) ===== */
-/* ===== TABLES (DEFAULT DESKTOP VIEW) ===== */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 20px;
-    color: #e5e7eb;
+  width: 100%;
+  border-collapse: collapse;
+  color: #ccc; /* Set default text to a readable light grey */
 }
 
-/* Header row */
-table tr:first-child {
-    background: #020617;
+table thead tr th {
+  color: #f00 !important;
+  text-transform: uppercase !important;
+  font-weight: 700;
+  padding: 15px 10px;
+  border-bottom: 2px solid #f00;
+  text-align: left;
 }
 
-/* Cells */
-table td {
-    padding: 9px 10px;
-    border-bottom: 1px solid #1f2937;
-    /* Removed white-space: nowrap here to let content wrap, but we apply it below for headers */
-    transition: background-color 0.18s ease-out, color 0.18s ease-out;
+table tbody tr td {
+  padding: 20px 10px;
+  color: #fff !important;
+  border-bottom: 1px solid #222;
+
+  /* THIS FIXES THE CAPS PROBLEM */
+  text-transform: none !important;
+  font-weight: 400 !important;
 }
 
-/* Let long URL + short code wrap (Content Data) */
-table tr:not(:first-child) td {
+table tbody tr td a {
+  text-transform: none !important;
+  display: inline-block;
+}
+
+/* Link Styling */
+table td a {
+  text-transform: none !important;
+  font-weight: normal !important;
+  color: #008cff;
+  text-decoration: none;
+}
+
+table td a:hover {
+  color: #0273cf;
+  text-decoration: underline;
+}
+
+/* Icon Button Fix */
+.icon {
+  background: #222;
+  border: 1px solid #444;
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.3s;
+  filter: grayscale(1); /* Keeps icons neutral until hover */
+}
+
+.icon-btn {
+  font-size: 35px;
+  background-color: #000;
+  border: #000;
+}
+
+.icon:hover {
+  filter: grayscale(0);
+  border-color: #f00;
+  background: #300;
+}
+
+.input-glass {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  background: rgba(24, 24, 24, 0.9);
+  padding: 40px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Style labels inside the form */
+.input-glass label {
+  color: #f00;
+  display: block;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* Style the Generate button */
+.input-glass button {
+  padding: 12px;
+  background: #f00;
+  color: #000;
+  font-weight: 700;
+  border: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.input-glass button:hover {
+  background: #ff4d4d;
+  box-shadow: 0 0 15px #f00;
+}
+
+/* Styling for the Success Page Link/Button */
+.home-submit-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  background: #f00;
+  color: #000;
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: 0.3s;
+  border: none;
+  cursor: pointer;
+  z-index: 100;
+  position: relative;
+}
+
+.home-submit-btn:hover {
+  background: #ff4d4d;
+  box-shadow: 0 0 15px #f00;
+  color: #000;
+}
+
+/* Vertical Table Style for Submit Page */
+/* This ensures the 'Information' column looks like a header */
+.scroll-container table tbody tr td:first-child {
+  color: #f00 !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  width: 30%;
+  border-right: 1px solid #333;
+}
+
+/* Ensure long URLs don't break the success box */
+.url-text {
+  word-break: break-all;
+  white-space: normal !important;
+}
+
+/* ===== 4. RESPONSIVE GRID ===== */
+/* ===== 4. RESPONSIVE DESIGN ===== */
+
+/* Tablet & Smaller Desktops (up to 1024px) */
+@media (max-width: 1024px) {
+  section span {
+    width: calc(10vw - 2px); /* Larger grid boxes */
+    height: calc(10vw - 2px);
+  }
+
+  .scroll-container {
+    padding: 20px;
+    width: 95%;
+  }
+}
+
+/* Mobile Devices (up to 768px) */
+@media (max-width: 768px) {
+  body {
+    padding: 20px 10px;
+  }
+
+  section span {
+    width: calc(20vw - 2px); /* Much larger grid boxes for mobile performance */
+    height: calc(20vw - 2px);
+  }
+
+  .dash-title {
+    font-size: 1.8rem;
+  }
+
+  .signin {
+    padding: 25px 15px;
+    width: 95%;
+  }
+
+  /* Convert Table to Stacked Cards for Readability */
+  .scroll-container {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  /* Hide table headers on mobile */
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tr {
+    background: rgba(24, 24, 24, 0.95);
+    border: 1px solid #333;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  td {
+    border: none !important;
+    position: relative;
+    padding-left: 50% !important; /* Make room for the label */
+    text-align: right !important;
     white-space: normal;
     word-break: break-all;
-}
+  }
 
-/* Force header cells to be on one line, or break only on space. 
-   This ensures we don't get awkward breaks like 'DELE TE U RL' 
-*/
-table tr:first-child td {
-    white-space: nowrap; /* Key Change: Prevent breaking onto new lines */
-}
-
-/* Header text style */
-table tr:first-child td {
-    font-size: 20px;
+  /* Add Labels using data-label attribute from your HTML */
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: 700;
+    color: #f00;
     text-transform: uppercase;
-    letter-spacing: 1.92px;
-    color: #9ca3af;
+    font-size: 0.8rem;
+  }
+
+  /* Fix for the Information column on Submit page */
+  .scroll-container table tbody tr td:first-child {
+    width: 100%;
+    border-right: none;
+  }
+
+  .user-login-div {
+    flex-direction: column; /* Stack Register/Login buttons */
+    gap: 10px;
+  }
 }
 
-/* Zebra rows */
-table tr:nth-child(even):not(:first-child) {
-    background: #020617;
-}
-
-/* Row hover highlight */
-table tr:not(:first-child):hover {
-    background: #020617;
-    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.7) inset;
-}
-
-/* ===== LINKS ===== */
-a {
-    color: #38bdf8;
-    text-decoration: none;
-    transition: color 0.16s ease-out;
-}
-
-a:hover {
-    color: #0ea5e9;
-}
-
-/* ===== HOME EMPTY STATE ===== */
-.no-dashboard {
-    margin-top: 14px;
-    color: #9ca3af;
-    font-size: 20px;
-    opacity: 0;
-    animation: fadeUp 0.55s ease-out 0.3s forwards;
-}
-
-/* ===== SUBMIT PAGE HOME BUTTON ===== */
-.home-page-button-div {
-    margin-top: 18px;
-    display: flex;
-    justify-content: center;
-    opacity: 0;
-    animation: fadeUp 0.6s ease-out 0.28s forwards;
-}
-
-.home-page-button {
-    padding-inline: 24px;
-}
-
-.home-submit {
-    color: #020617;
-}
-
-.home-page-button a {
-    text-decoration: none;
-}
-
-.home-submit:hover {
-    color: #020617;
-}
-
-/* ===== ERROR PAGE SECOND TITLE ===== */
-body > h1:nth-of-type(2) {
-    margin-top: 12px;
-    font-size: 16px;
-    color: #f97373;
-    text-align: center;
-    opacity: 0;
-    animation: fadeUp 0.6s ease-out 0.2s forwards;
-}
-
-/* ===== SMALL SCREEN TWEAKS (General) ===== */
+/* Small Mobile Devices (up to 480px) */
 @media (max-width: 480px) {
-    body {
-        padding-top: 18px;
-    }
+  .content h2 {
+    font-size: 1.5em;
+  }
 
-    .title {
-        margin-bottom: 18px;
-    }
+  .inputBox input {
+    padding: 20px 10px 10px; /* Tighter inputs */
+  }
 
-    .scroll-container {
-        padding-inline: 8px;
-    }
-
-    table td {
-        padding: 7px 8px;
-    }
-}
-
-/* ======================================= */
-/* ===== MOBILE TABLE RESPONSIBILITY ===== */
-/* ======================================= */
-
-/* Apply the mobile-specific styles below 800px */
-@media (max-width: 1050px) {
-    
-    /* Hide the horizontal scrollbar */
-    .scroll-container {
-        overflow-x: hidden;
-        padding: 0; /* Remove internal padding, let cards handle it */
-        border: none;
-        background: none;
-    }
-
-    /* Hide the original table headers on mobile */
-    .scroll-container table tr:first-child {
-        display: none;
-    }
-
-    /* Make the table act like a stack of cards */
-    .scroll-container table,
-    .scroll-container table tbody,
-    .scroll-container table tr,
-    .scroll-container table td {
-        display: block;
-        width: 100%; /* Rows and cells take full width */
-    }
-
-    /* Style the row to look like a separate card */
-    .scroll-container table tr:not(:first-child) {
-        margin-bottom: 12px;
-        padding: 12px;
-        border: 1px solid #1f2937;
-        border-radius: 12px;
-        background: #0b1120; /* Darker background for 'card' */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        display: flex; /* Use flexbox to organize sections */
-        flex-wrap: wrap;
-    }
-
-    /* Reset row hover effect for the card layout */
-    .scroll-container table tr:not(:first-child):hover {
-        background: #0b1120; 
-        box-shadow: none; /* Remove the large inset shadow */
-    }
-
-    /* Style each cell (which is now a full-width row item) */
-    .scroll-container table td {
-        border-bottom: none; /* Remove borders between 'fields' */
-        padding: 8px 0; /* Adjust padding for stack */
-        position: relative;
-        text-align: right; /* Align value to the right */
-        word-break: break-word; /* Ensure long content wraps */
-        width: 100%; /* Default to full width for non-action cells */
-    }
-    
-    /* Insert the column name before the cell content using its data-label attribute */
-    .scroll-container table td::before {
-        content: attr(data-label);
-        float: left;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.9px;
-        color: #9ca3af;
-        padding-right: 10px; /* Space between label and value */
-    }
-    
-    /* Special styling for the action buttons (Copy URL and Delete URL) */
-    .scroll-container table td:nth-last-child(2), /* Copy URL */
-    .scroll-container table td:last-child { /* Delete URL */
-        width: 50%; /* Make them take half the width */
-        padding: 12px 0;
-        text-align: center;
-        border-top: 1px solid #1f2937; /* Separator line for the actions */
-    }
-    
-    /* Remove the float for the action button labels */
-    .scroll-container table td:nth-last-child(2)::before,
-    .scroll-container table td:last-child::before {
-        display: none;
-    }
-
-    /* Ensure action buttons are visually distinct */
-    .scroll-container table tr:not(:first-child) td:last-child {
-        border-left: 1px solid #1f2937;
-    }
+  section span {
+    width: calc(25vw - 2px);
+    height: calc(25vw - 2px);
+  }
 }

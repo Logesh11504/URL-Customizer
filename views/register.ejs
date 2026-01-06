@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -55,4 +55,61 @@
         });
     }
 </script>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Customizer</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- partial:index.partial.html -->
+    <section><% for(let i=0; i<600; i++) { %> <span></span> <% } %></section>
+    <h1 class="dash-title">URL Customizer</h1>
+    <div class="signin">
+      <div class="content">
+        <% if (locals.error) { %>
+        <div
+          class="error-message"
+          style="
+            color: #ff4d4d;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-align: center;
+          "
+        >
+          <%= error %>
+        </div>
+        <% } %>
+        <form class="login_form" method="post" action="/register">
+          <h2 class="form-title">Register</h2>
+          <div class="form">
+            <div class="inputBox">
+              <input type="text" name="username" required />
+              <i>Username</i>
+            </div>
+            <div class="inputBox">
+              <input type="email" name="email" required />
+              <i>Email</i>
+            </div>
+            <div class="inputBox">
+              <input type="password" name="password" required />
+              <i>Password</i>
+            </div>
+            <div class="inputBox">
+              <input type="submit" />
+            </div>
+            <div class="links">
+              <!-- <a href="#">Forgot Password</a> -->
+              <h4>Already User?<a href="/login"> Login</a></h4>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- partial -->
+  </body>
 </html>

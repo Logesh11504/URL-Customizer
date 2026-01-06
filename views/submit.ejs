@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -40,4 +40,69 @@
         <button class="home-page-button"><a class="home-submit" href="/home">Home</a></button>
     </div>
 </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Customizer</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <section><% for(let i=0; i<600; i++) { %> <span></span> <% } %></section>
+
+    <div class="dashboard-container">
+      <h1 class="dash-title">URL Customizer</h1>
+
+      <h2 class="dash-title" style="font-size: 1.5em; margin-bottom: 20px">
+        Link Generated Successfully
+      </h2>
+
+      <div class="scroll-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Information</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Custom URL</td>
+              <td>
+                <a href="<%= short_url %>" target="_blank"><%= short_url %></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Custom Code</td>
+              <td><%= shortcode %></td>
+            </tr>
+            <tr>
+              <td>Long URL</td>
+              <td class="url-text">
+                <a href="<%= long_url %>" target="_blank"><%= long_url %></a>
+              </td>
+            </tr>
+            <tr>
+              <td>Total Click</td>
+              <td><%= total_click %></td>
+            </tr>
+            <tr>
+              <td>Last Clicked</td>
+              <td><%= last_clicked %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="home-page-button-div"
+        style="margin-top: 30px; text-align: center"
+      >
+        <a href="/home" class="home-submit-btn">Back to Dashboard</a>
+      </div>
+    </div>
+  </body>
 </html>
